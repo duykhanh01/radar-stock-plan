@@ -2623,16 +2623,16 @@
       document.getElementById('global-progress').style.width = pct + '%';
       document.getElementById('pct-label').textContent = pct + '%';
 
-      DATA.phases.forEach(ph => {
+      DATA.phases.forEach((ph, pi) => {
         const fill = document.querySelector(`.pcard-fill-${ph.id}`);
         if (!fill) return;
         let pt = 0, pd = 0;
-        ph.weeks_data.forEach(w => {
-          w.days.forEach(d => {
-            d.groups.forEach(g => {
-              g.tasks.forEach(t => {
+        ph.weeks_data.forEach((w, wi) => {
+          w.days.forEach((d, di) => {
+            d.groups.forEach((g, gi) => {
+              g.tasks.forEach((t, ti) => {
                 pt++;
-                const tid = btoa(encodeURIComponent(t)).substring(0, 16);
+                const tid = taskId(pi, wi, di, gi, ti);
                 if (checked[tid]) pd++;
               });
             });
@@ -2643,15 +2643,15 @@
         const sidebarProg = document.querySelector(`.sidebar-prog-${ph.id}`);
         if (sidebarProg) sidebarProg.textContent = pp + '%';
 
-        ph.weeks_data.forEach(w => {
+        ph.weeks_data.forEach((w, wi) => {
           const wEl = document.querySelector(`.week-prog-${w.id}`);
           if (!wEl) return;
           let wt = 0, wd = 0;
-          w.days.forEach(d => {
-            d.groups.forEach(g => {
-              g.tasks.forEach(t => {
+          w.days.forEach((d, di) => {
+            d.groups.forEach((g, gi) => {
+              g.tasks.forEach((t, ti) => {
                 wt++;
-                const tid = taskId(t, w.id);
+                const tid = taskId(pi, wi, di, gi, ti);
                 if (checked[tid]) wd++;
               });
             });
@@ -2662,9 +2662,9 @@
       });
     }
 
-    function taskId(text, weekId) {
-      const key = (weekId ? `${weekId}::` : '') + text;
-      return btoa(encodeURIComponent(key)).substring(0, 16);
+    function taskId(phaseIndex, weekIndex, dayIndex, groupIndex, taskIndex) {
+      // ID dựa trên vị trí trong DATA: phase-week-day-group-task
+      return `${phaseIndex}-${weekIndex}-${dayIndex}-${groupIndex}-${taskIndex}`;
     }
 
     function toggleTask(tid, cb, item) {
@@ -2760,11 +2760,11 @@
         document.head.appendChild(beforeEl);
         main.appendChild(phDiv);
 
-        ph.weeks_data.forEach(w => renderWeek(w, ph.color, main));
+        ph.weeks_data.forEach((w, wi) => renderWeek(w, ph.color, main, pi, wi));
       });
     }
 
-    function renderWeek(w, color, container) {
+    function renderWeek(w, color, container, phaseIndex, weekIndex) {
       const block = document.createElement('div');
       block.className = 'week-block';
       block.id = w.id;
@@ -2787,7 +2787,7 @@
       sw.innerHTML = `<span class="small-win-icon">🏆</span><span><strong>Small Win:</strong> ${w.win}</span>`;
       body.appendChild(sw);
 
-      w.days.forEach(d => renderDay(d, body, w.id));
+      w.days.forEach((d, di) => renderDay(d, body, phaseIndex, weekIndex, di));
 
       header.onclick = () => {
         const isOpen = body.classList.contains('open');
@@ -2800,9 +2800,9 @@
       container.appendChild(block);
 
       let wt = 0, wd = 0;
-      w.days.forEach(d => d.groups.forEach(g => g.tasks.forEach(t => {
+      w.days.forEach((d, di) => d.groups.forEach((g, gi) => g.tasks.forEach((t, ti) => {
         wt++;
-        const tid = taskId(t, w.id);
+        const tid = taskId(phaseIndex, weekIndex, di, gi, ti);
         if (checked[tid]) wd++;
       })));
       const wcEl = document.getElementById(`wc-${w.id}`);
@@ -2812,7 +2812,7 @@
       }
     }
 
-    function renderDay(d, container, weekId) {
+    function renderDay(d, container, phaseIndex, weekIndex, dayIndex) {
       const db = document.createElement('div');
       db.className = 'day-block';
 
@@ -2828,7 +2828,7 @@
         db.appendChild(dg);
       }
 
-      d.groups.forEach(g => {
+      d.groups.forEach((g, gi) => {
         const tg = document.createElement('div');
         tg.className = 'task-group';
         if (g.name) {
@@ -2837,8 +2837,8 @@
           gt.textContent = g.name;
           tg.appendChild(gt);
         }
-        g.tasks.forEach(t => {
-          const tid = taskId(t, weekId);
+        g.tasks.forEach((t, ti) => {
+          const tid = taskId(phaseIndex, weekIndex, dayIndex, gi, ti);
           const item = document.createElement('div');
           item.className = 'task-item' + (checked[tid] ? ' done' : '');
           const cb = document.createElement('div');
