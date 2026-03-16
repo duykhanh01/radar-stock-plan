@@ -1,0 +1,2958 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radar Stock VN — Kế hoạch 24 Tuần</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09090b;
+      --bg2: #18181b;
+      --bg3: #27272a;
+      --surface: #27272a;
+      --surface2: #3f3f46;
+      --border: #3f3f46;
+      --border2: #52525b;
+      --text: #f4f4f5;
+      --text2: #a1a1aa;
+      --text3: #71717a;
+      --accent: #3b82f6;
+      --accent2: #60a5fa;
+      --green: #10b981;
+      --green2: #059669;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --r: 10px;
+      --r2: 16px;
+      --r3: 24px;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'Inter', sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text3);
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9, 9, 11, 0.8);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .header-logo {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo span {
+      color: var(--text3);
+      font-weight: 400;
+      font-family: var(--sans);
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .stat-val {
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .stat-val.green {
+      color: var(--green);
+      text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text2);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .progress-bar-wrap {
+      width: 200px;
+      height: 6px;
+      background: var(--bg3);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      border-radius: 4px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 70px);
+    }
+
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      background: var(--bg);
+      border-right: 1px solid var(--border);
+      padding: 32px 0;
+      position: sticky;
+      top: 70px;
+      height: calc(100vh - 70px);
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      margin-bottom: 8px;
+    }
+
+    .sidebar-phase-btn {
+      width: calc(100% - 32px);
+      margin: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text2);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: left;
+      border-radius: var(--r);
+      transition: all 0.2s;
+    }
+
+    .sidebar-phase-btn:hover {
+      background: var(--bg2);
+      color: var(--text);
+    }
+
+    .sidebar-phase-btn.active {
+      color: var(--text);
+      background: var(--bg2);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .phase-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .sidebar-weeks {
+      padding: 4px 0 12px;
+    }
+
+    .sidebar-week-btn {
+      width: calc(100% - 32px);
+      margin: 2px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px 8px 40px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text3);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      text-align: left;
+      border-radius: var(--r);
+      transition: all 0.2s;
+    }
+
+    .sidebar-week-btn:hover {
+      color: var(--text);
+      background: var(--bg2);
+    }
+
+    .sidebar-week-btn.active {
+      color: var(--accent);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .week-progress-mini {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+      background: var(--bg2);
+      padding: 2px 6px;
+      border-radius: 12px;
+    }
+
+    .week-progress-mini.done {
+      color: var(--green);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .main {
+      flex: 1;
+      padding: 48px 64px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .phase-header {
+      margin-bottom: 40px;
+      padding: 32px;
+      border-radius: var(--r2);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .phase-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .phase-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .phase-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .phase-goal {
+      font-size: 15px;
+      color: var(--text2);
+      line-height: 1.6;
+      max-width: 90%;
+    }
+
+    .phase-meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .phase-tag {
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      transition: all 0.2s;
+    }
+
+    .phase-tag:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+    }
+
+    .week-block {
+      margin-bottom: 32px;
+      border-radius: var(--r2);
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+
+    .week-block:hover {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+      border-color: var(--border2);
+    }
+
+    .week-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      cursor: pointer;
+      background: var(--bg2);
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    .week-header:hover {
+      background: var(--surface);
+    }
+
+    .week-num {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text3);
+      letter-spacing: 0.05em;
+      min-width: 70px;
+    }
+
+    .week-title-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .week-win {
+      font-size: 12px;
+      color: var(--amber);
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .week-stats {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 16px;
+    }
+
+    .week-count {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text3);
+      background: var(--surface);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .week-count.done {
+      color: var(--green);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .chevron {
+      color: var(--text3);
+      font-size: 12px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-left: 8px;
+    }
+
+    .week-body {
+      display: none;
+    }
+
+    .week-body.open {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .day-block {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      background: var(--bg);
+    }
+
+    .day-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .day-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .day-label.backend {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .day-label.frontend {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .day-label.connect {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .day-label.database {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .day-label.java {
+      background: rgba(249, 115, 22, 0.15);
+      color: #fb923c;
+      border: 1px solid rgba(249, 115, 22, 0.3);
+    }
+
+    .day-label.kafka {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .day-label.infra {
+      background: rgba(52, 211, 153, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .day-label.realtime {
+      background: rgba(129, 140, 248, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(129, 140, 248, 0.3);
+    }
+
+    .day-label.visual {
+      background: rgba(232, 121, 249, 0.15);
+      color: #e879f9;
+      border: 1px solid rgba(232, 121, 249, 0.3);
+    }
+
+    .day-label.ai {
+      background: rgba(45, 212, 191, 0.15);
+      color: #2dd4bf;
+      border: 1px solid rgba(45, 212, 191, 0.3);
+    }
+
+    .day-label.deploy {
+      background: rgba(163, 230, 53, 0.15);
+      color: #a3e635;
+      border: 1px solid rgba(163, 230, 53, 0.3);
+    }
+
+    .day-label.review {
+      background: rgba(148, 163, 184, 0.15);
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .day-label.billing {
+      background: rgba(110, 231, 183, 0.15);
+      color: #6ee7b7;
+      border: 1px solid rgba(110, 231, 183, 0.3);
+    }
+
+    .day-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .day-goal {
+      font-size: 14px;
+      color: var(--text2);
+      margin-bottom: 20px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border-radius: var(--r);
+      border-left: 4px solid var(--accent);
+      line-height: 1.6;
+    }
+
+    .day-goal strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .task-group {
+      margin-bottom: 16px;
+    }
+
+    .task-group-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 4px;
+      border: 1px solid transparent;
+    }
+
+    .task-item:hover {
+      background: var(--bg2);
+      border-color: var(--border);
+      transform: translateX(2px);
+    }
+
+    .task-cb {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border2);
+      border-radius: 6px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--bg);
+    }
+
+    .task-cb.checked {
+      background: var(--green);
+      border-color: var(--green);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    }
+
+    .task-cb.checked::after {
+      content: '';
+      width: 6px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-bottom: 2px;
+    }
+
+    .task-text {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.6;
+      flex: 1;
+      transition: all 0.2s;
+    }
+
+    .task-item.done .task-text {
+      color: var(--text3);
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+
+    .task-code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--accent2);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .small-win {
+      margin: 0 24px 20px;
+      padding: 16px 20px;
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.02) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: var(--r2);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: #6ee7b7;
+      line-height: 1.6;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .small-win-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .resource-bar {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .resource-label {
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .resource-link {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text2);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .resource-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .overview {
+      margin-bottom: 48px;
+      padding: 40px;
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--r3);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .overview-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      font-family: var(--mono);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .phase-card {
+      padding: 20px;
+      border-radius: var(--r2);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .phase-card:hover {
+      border-color: var(--border2);
+      background: var(--surface);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .phase-card-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .phase-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .phase-card-weeks {
+      font-size: 12px;
+      color: var(--text3);
+      font-family: var(--mono);
+      margin-bottom: 12px;
+    }
+
+    .phase-card-win {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    .phase-card-prog {
+      margin-top: 16px;
+      height: 4px;
+      background: var(--bg3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .phase-card-prog-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .principle {
+      margin-bottom: 40px;
+      padding: 20px 24px;
+      background: rgba(59, 130, 246, 0.05);
+      border-radius: var(--r2);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .principle-icon {
+      font-size: 24px;
+    }
+
+    .principle-text {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .principle-text strong {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    .phase-divider {
+      margin: 64px 0 40px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .phase-divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+
+    .phase-divider-label {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--bg2);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Action Buttons (Export/Import) */
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(39, 39, 42, 0.6);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: var(--sans);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .action-btn svg {
+      color: var(--text2);
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--surface2);
+      border-color: var(--border2);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .action-btn:active {
+      transform: translateY(0);
+    }
+
+    .action-btn.export-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .action-btn.export-btn:hover svg {
+      color: var(--green);
+      transform: translateY(2px);
+    }
+
+    .action-btn.import-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .action-btn.import-btn:hover svg {
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="header-logo">
+      <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
+        <rect width="20" height="20" rx="6" fill="#3b82f6" opacity="0.15" />
+        <polyline points="3,14 7,9 11,12 17,5" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round"
+          stroke-linejoin="round" />
+        <circle cx="17" cy="5" r="2" fill="#10b981" />
+      </svg>
+      RADAR STOCK VN <span>— 24-Week Roadmap</span>
+    </div>
+    <div class="header-stats">
+      <div
+        style="display: flex; gap: 12px; margin-right: 24px; border-right: 1px solid var(--border); padding-right: 24px; align-items: center;">
+        <button onclick="exportProgress()" class="action-btn export-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export JSON
+        </button>
+        <button onclick="document.getElementById('import-file').click()" class="action-btn import-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Import JSON
+        </button>
+        <input type="file" id="import-file" style="display: none" accept=".json" onchange="importProgress(event)">
+      </div>
+      <div class="stat-item">
+        <span class="stat-val green" id="done-count">0</span>
+        <span class="stat-label">Done</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val" id="total-count">0</span>
+        <span class="stat-label">Tasks</span>
+      </div>
+      <div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="global-progress" style="width:0%"></div>
+        </div>
+        <div class="stat-label" style="text-align:right;margin-top:6px;font-family:var(--mono);" id="pct-label">0%</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="main" id="main"></main>
+  </div>
+
+  <script>
+    const DATA = {
+      phases: [
+        {
+          id: 'p1', color: '#3b82f6', label: 'Phase 1', emoji: '🔵',
+          title: 'Fullstack Foundation',
+          weeks: '1 – 4',
+          goal: 'Cuối tháng 1 có app thực thụ — đăng nhập được, xem giá realtime, nhận thông báo.',
+          win: 'Login · Watchlist realtime · Alert notification chạy trên browser',
+          tags: ['NestJS', 'PostgreSQL', 'Next.js', 'Kafka', 'Socket.io', 'Redis'],
+          weeks_data: [
+            {
+              id: 'w1', num: 'Tuần 1', title: 'Khởi tạo hệ sinh thái (Fullstack Hello World)',
+              win: 'DB → API → UI xuyên suốt. Thấy User thật trên browser!',
+              days: [
+                {
+                  label: 'Backend', labelClass: 'backend',
+                  title: 'Ngày 1–2 — NestJS + PostgreSQL + API /health',
+                  goal: '**Kết quả:** Postman gọi `/health` nhận `{ "status": "ok", "database": "connected" }`',
+                  groups: [
+                    {
+                      name: 'Setup môi trường', tasks: [
+                        'Cài Docker Desktop — chạy `docker --version` để verify',
+                        'Cài Node.js 20 LTS từ nodejs.org',
+                        'Cài NestJS CLI: `npm install -g @nestjs/cli`',
+                        'Tạo project: `nest new radar-backend` — chọn npm',
+                        'Chạy `npm run start:dev` — thấy "Application is running on port 3000"'
+                      ]
+                    },
+                    {
+                      name: 'PostgreSQL qua Docker', tasks: [
+                        'Tạo docker-compose.yml với postgres:16-alpine service',
+                        'Chạy: `docker-compose up -d`',
+                        'Cài DBeaver (GUI) — kết nối và thấy database radar_stock'
+                      ]
+                    },
+                    {
+                      name: 'Prisma ORM + API /health', tasks: [
+                        'Cài: `npm install prisma @prisma/client`',
+                        'Init: `npx prisma init` — tạo prisma/schema.prisma',
+                        'Sửa .env: DATABASE_URL trỏ vào postgres container',
+                        'Viết GET /health trả về { status, database, timestamp }',
+                        'Test bằng Postman — nhận JSON đúng',
+                        'Thêm .env vào .gitignore ngay!'
+                      ]
+                    }
+                  ],
+                  resources: ['docs.nestjs.com/first-steps', 'prisma.io/docs/getting-started']
+                },
+                {
+                  label: 'Frontend', labelClass: 'frontend',
+                  title: 'Ngày 3 — Next.js + Dashboard layout',
+                  goal: '**Kết quả:** Mở localhost:3001 thấy dashboard đẹp với sidebar và 4 stat cards (data giả).',
+                  groups: [
+                    {
+                      name: 'Khởi tạo', tasks: [
+                        'Tạo: `npx create-next-app@latest radar-frontend --typescript --tailwind --app --src-dir`',
+                        'Chạy: `npm run dev` trên port 3001'
+                      ]
+                    },
+                    {
+                      name: 'Layout', tasks: [
+                        'Sidebar trái: Logo + nav items (Dashboard, Watchlist, Portfolio, Alerts)',
+                        'Header trên: tên trang + avatar placeholder + notification bell',
+                        '4 Stat cards: Tổng danh mục / P&L hôm nay / Alerts active / Tin tức mới',
+                        'Responsive: test trên Chrome DevTools → 375px'
+                      ]
+                    }
+                  ],
+                  resources: ['nextjs.org/docs', 'tailwindcss.com/docs']
+                },
+                {
+                  label: 'Connect', labelClass: 'connect',
+                  title: 'Ngày 4 — Next.js gọi NestJS API',
+                  goal: '**Kết quả:** Badge 🟢 "Backend Connected" hiển thị trên Dashboard.',
+                  groups: [
+                    {
+                      name: 'API client', tasks: [
+                        'Cài: `npm install axios`',
+                        'Tạo src/lib/api.ts — axios instance với baseURL=http://localhost:3000',
+                        'Tạo .env.local: NEXT_PUBLIC_API_URL=http://localhost:3000'
+                      ]
+                    },
+                    {
+                      name: 'Kết nối', tasks: [
+                        'Fetch GET /health khi Dashboard mount',
+                        'Hiển thị badge: 🟢 "Backend Connected" nếu ok, 🔴 "Offline" nếu lỗi',
+                        'Xử lý CORS trong NestJS: app.enableCors({ origin: "http://localhost:3001" })',
+                        'Test: tắt NestJS → badge đỏ. Bật lại → xanh'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Database', labelClass: 'database',
+                  title: 'Ngày 5 — Prisma schema + User table + Hiển thị UI',
+                  goal: '**Kết quả:** Bảng Users thật trên browser — PostgreSQL → NestJS → Next.js hoàn chỉnh!',
+                  groups: [
+                    {
+                      name: 'Schema + Migration', tasks: [
+                        'Định nghĩa User model: id (uuid), email (unique), full_name, plan, status, created_at',
+                        'Migration: `npx prisma migrate dev --name init`',
+                        'Seed 5 users mẫu: `npx prisma db seed`',
+                        'Verify Prisma Studio: `npx prisma studio` → localhost:5555'
+                      ]
+                    },
+                    {
+                      name: 'API + UI', tasks: [
+                        'GET /users endpoint trong NestJS — trả danh sách users',
+                        'Trang /users trong Next.js: fetch + hiển thị bảng',
+                        'Bảng: Email | Full Name | Plan | Status',
+                        'Loading skeleton khi đang fetch',
+                        'Empty state khi không có data'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w2', num: 'Tuần 2', title: 'Auth Module — Thấy được sự bảo mật',
+              win: 'Tự đăng ký tài khoản → đăng nhập → thấy tên mình hiện góc màn hình!',
+              days: [
+                {
+                  label: 'Backend', labelClass: 'backend',
+                  title: 'Ngày 6–7 — JWT + bcrypt + Register/Login API',
+                  goal: '**Kết quả:** Postman: register → login → nhận JWT → gọi protected route thành công.',
+                  groups: [
+                    {
+                      name: 'Schema', tasks: [
+                        'Thêm vào User: password_hash, status (UNVERIFIED/ACTIVE/LOCKED), failed_attempts',
+                        'Migration: `npx prisma migrate dev --name add-auth-fields`',
+                        'Cài: `npm install bcrypt @nestjs/jwt @nestjs/passport passport passport-jwt @types/bcrypt`'
+                      ]
+                    },
+                    {
+                      name: 'Register endpoint', tasks: [
+                        'POST /auth/register: validate email + password (≥8 ký tự, ≥1 chữ hoa, ≥1 số)',
+                        'Check email trùng → HTTP 409 với message rõ ràng',
+                        'Hash: `bcrypt.hash(password, 12)` — ~200ms bình thường',
+                        'Insert user với status=ACTIVE, return 201 + user info (không có hash)'
+                      ]
+                    },
+                    {
+                      name: 'Login + JWT', tasks: [
+                        'POST /auth/login: tìm user, bcrypt.compare — không short-circuit',
+                        'Sai 5 lần: lock account 30 phút, gửi email cảnh báo',
+                        'Tạo access_token JWT: TTL 15 phút, payload {sub, email, plan}',
+                        'Thêm Redis vào docker-compose cho refresh_token storage',
+                        'Tạo refresh_token: UUID lưu Redis TTL 7 ngày',
+                        'JwtAuthGuard bảo vệ GET /users — test không có token → 401'
+                      ]
+                    }
+                  ],
+                  resources: ['docs.nestjs.com/security/authentication']
+                },
+                {
+                  label: 'Frontend', labelClass: 'frontend',
+                  title: 'Ngày 8–9 — Trang Login + Register UI',
+                  goal: '**Kết quả:** Form đẹp, điền register → success → login → vào Dashboard.',
+                  groups: [
+                    {
+                      name: 'Cài thư viện', tasks: [
+                        'npm install next-auth react-hook-form zod @hookform/resolvers'
+                      ]
+                    },
+                    {
+                      name: 'Trang /login', tasks: [
+                        'Form: Email + Password với Tailwind styling đẹp',
+                        'Loading spinner khi gọi API',
+                        'Error message đỏ khi sai mật khẩu',
+                        'Link sang trang Register'
+                      ]
+                    },
+                    {
+                      name: 'Trang /register', tasks: [
+                        'Form: Full Name + Email + Password + Confirm Password',
+                        'Zod validation: real-time error khi blur',
+                        'Password strength indicator: Yếu / Trung bình / Mạnh',
+                        'Success: redirect sang /login với toast'
+                      ]
+                    },
+                    {
+                      name: 'NextAuth.js', tasks: [
+                        'CredentialsProvider: authorize gọi POST /auth/login',
+                        'Lưu JWT vào session/cookie',
+                        'Middleware: redirect /login nếu chưa auth'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Connect', labelClass: 'connect',
+                  title: 'Ngày 10 — Personalization + User Header',
+                  goal: '**Kết quả:** Header hiển thị avatar + tên + plan badge. Dashboard có lời chào cá nhân.',
+                  groups: [
+                    {
+                      name: 'Backend', tasks: [
+                        'GET /auth/me endpoint — trả user info từ JWT (không query DB)'
+                      ]
+                    },
+                    {
+                      name: 'Frontend', tasks: [
+                        'Header: avatar circle (initials) + full_name + badge FREE/PRO',
+                        'Dashboard: "Xin chào, {full_name}! 👋"',
+                        'Logout: xóa session → redirect /login',
+                        'Protected routes: middleware tự redirect nếu chưa login'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w3', num: 'Tuần 3', title: 'Kafka & Luồng dữ liệu "Sống"',
+              win: 'Pipeline Kafka → WebSocket → UI hoạt động. Giá VIC nhảy realtime không cần F5!',
+              days: [
+                {
+                  label: 'Kafka', labelClass: 'kafka',
+                  title: 'Ngày 11–12 — Kafka setup + Price Simulator',
+                  goal: '**Kết quả:** Kafka UI (localhost:8080) thấy messages chảy liên tục vào topic price-tick.',
+                  groups: [
+                    {
+                      name: 'Docker setup', tasks: [
+                        'Thêm vào docker-compose: zookeeper + kafka (bitnami) + kafka-ui',
+                        'docker-compose up -d → mở localhost:8080 thấy Kafka UI',
+                        'Tạo topic price-tick: 4 partitions, replication=1 (dev)'
+                      ]
+                    },
+                    {
+                      name: 'Price Simulator trong NestJS', tasks: [
+                        'Cài: npm install kafkajs',
+                        'Tạo KafkaModule với KafkaService (singleton producer)',
+                        'PriceSimulatorService: setInterval 500ms, random walk ±0.5%',
+                        '5 mã: VIC, VNM, VHM, FPT, MBB với base price khác nhau',
+                        'Publish: {symbol, price, volume, change_pct, ts} vào price-tick',
+                        'Verify Kafka UI: thấy messages chảy liên tục'
+                      ]
+                    }
+                  ],
+                  resources: ['kafka.js.org', 'github.com/provectus/kafka-ui']
+                },
+                {
+                  label: 'Realtime', labelClass: 'realtime',
+                  title: 'Ngày 13–14 — Socket.io + WebSocket Hub',
+                  goal: '**Kết quả:** Mở test.html → thấy giá VIC log ra console mỗi 500ms.',
+                  groups: [
+                    {
+                      name: 'WebSocket Gateway', tasks: [
+                        'Cài: npm install @nestjs/websockets @nestjs/platform-socket.io socket.io @socket.io/redis-adapter',
+                        'Tạo PriceGateway với @WebSocketGateway({ cors: true })',
+                        '@SubscribeMessage("subscribe"): join rooms "price:VIC"',
+                        '@SubscribeMessage("unsubscribe"): leave rooms',
+                        'Redis adapter setup (tập thói quen tốt dù chưa cần scale)'
+                      ]
+                    },
+                    {
+                      name: 'Kafka → WebSocket', tasks: [
+                        'Consumer Kafka price-tick trong Gateway',
+                        'server.to("price:VIC").emit("price_update", data)',
+                        'Tạo test.html đơn giản dùng socket.io CDN',
+                        'Mở browser console → thấy giá nhảy mỗi 500ms'
+                      ]
+                    }
+                  ],
+                  resources: ['socket.io/docs', 'docs.nestjs.com/websockets/gateways']
+                },
+                {
+                  label: 'Visual', labelClass: 'visual',
+                  title: 'Ngày 15 — Giá nhảy realtime trên Next.js',
+                  goal: '**Kết quả:** 5 PriceCard màu xanh/đỏ đang thay đổi liên tục trên Dashboard.',
+                  groups: [
+                    {
+                      name: 'Custom hook', tasks: [
+                        'Cài: npm install socket.io-client',
+                        'Tạo hook usePriceFeed(symbols): connect → subscribe → update state',
+                        'Cleanup: disconnect khi unmount'
+                      ]
+                    },
+                    {
+                      name: 'PriceCard component', tasks: [
+                        'Hiển thị: mã | giá | Δ% so với giá trước',
+                        'text-emerald-500 khi tăng, text-red-500 khi giảm',
+                        'CSS transition: color 0.3s cho smooth change',
+                        'Subtle background flash khi giá đổi (keyframe)',
+                        'Dashboard: hàng 5 PriceCard — VIC · VNM · VHM · FPT · MBB'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w4', num: 'Tuần 4', title: 'Watchlist & Alerts — Nghiệp vụ đầu tiên',
+              win: 'App thực thụ: Login · Watchlist realtime · Alert notification · Email gửi được!',
+              days: [
+                {
+                  label: 'Backend', labelClass: 'backend',
+                  title: 'Ngày 16–17 — Watchlist CRUD + Business Rules',
+                  goal: '**Kết quả:** Thêm VIC → mã xuất hiện với giá realtime. FREE badge "7/10 mã".',
+                  groups: [
+                    {
+                      name: 'Schema + API', tasks: [
+                        'Schema watchlist_items: id, user_id, symbol, position, created_at',
+                        'GET /watchlist — lấy danh sách của user (từ JWT)',
+                        'POST /watchlist/items — validate symbol hợp lệ, FREE ≤ 10 mã',
+                        'DELETE /watchlist/items/:symbol',
+                        'PATCH /watchlist/items/reorder — lưu thứ tự kéo thả'
+                      ]
+                    },
+                    {
+                      name: 'Business rules', tasks: [
+                        'FREE ≤ 10 mã → HTTP 403: "Nâng cấp Pro để theo dõi không giới hạn"',
+                        'Khi thêm mã: publish Kafka watchlist-events {ADD, userId, symbol}',
+                        'Cache Redis 5 phút, invalidate khi thay đổi'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Frontend', labelClass: 'frontend',
+                  title: 'Ngày 16–17 (cont.) — Watchlist UI',
+                  goal: '**Kết quả:** Trang /watchlist đẹp với kéo thả sắp xếp và giá realtime.',
+                  groups: [
+                    {
+                      name: 'UI', tasks: [
+                        'Search input: gõ "VIC" → gợi ý tên công ty',
+                        'Click "Thêm" → mã xuất hiện với animation',
+                        'Mỗi dòng: Mã | Tên công ty | Giá (realtime) | % hôm nay | Nút xóa',
+                        'usePriceFeed(watchlistSymbols) để giá cập nhật realtime',
+                        'Kéo thả: npm install @dnd-kit/core @dnd-kit/sortable',
+                        'Badge: "7/10 mã (FREE)"'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Backend', labelClass: 'backend',
+                  title: 'Ngày 18–19 — Alert Rules + Evaluator',
+                  goal: '**Kết quả:** Tạo rule "VIC > 55k" → simulate tick vượt ngưỡng → alert published.',
+                  groups: [
+                    {
+                      name: 'Schema + API', tasks: [
+                        'Schema alert_rules: id, user_id, symbol, type, threshold, channels[], status, last_triggered_at',
+                        'GET /alerts/rules, POST /alerts/rules (FREE ≤ 5), PATCH, DELETE',
+                        'Types hỗ trợ: PRICE_ABOVE, PRICE_BELOW, PCT_UP, PCT_DOWN, VOLUME_SPIKE'
+                      ]
+                    },
+                    {
+                      name: 'Alert Evaluator', tasks: [
+                        'Consumer Kafka price-tick trong NestJS',
+                        'Load rules vào HashMap per-symbol, refresh Redis mỗi 1 phút',
+                        'Evaluate mỗi tick: nếu match → publish Kafka alerts topic',
+                        'Cooldown: Redis key cooldown:{ruleId} TTL 3600 (không spam)'
+                      ]
+                    },
+                    {
+                      name: 'UI Alert Builder', tasks: [
+                        'Modal tạo alert: dropdown mã + loại + threshold',
+                        'Preview text: "Sẽ thông báo khi VIC vượt 55,000đ"',
+                        'Danh sách rules với toggle bật/tắt'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Connect', labelClass: 'connect',
+                  title: 'Ngày 20 — Notification: Toast + Email + Bell',
+                  goal: '**Kết quả:** Alert trigger → toast 5 giây + email đến Mailtrap. Notification bell có badge.',
+                  groups: [
+                    {
+                      name: 'WebSocket push', tasks: [
+                        'Gateway consumer alerts → socket.to(userId).emit("alert_triggered")',
+                        'Next.js: socket.on("alert_triggered", alert => toast(...))'
+                      ]
+                    },
+                    {
+                      name: 'Toast UI', tasks: [
+                        'npm install react-hot-toast',
+                        'Format: "🔔 VIC đã vượt 55,000đ — Hiện tại: 55,200đ (+0.36%)"',
+                        'Duration 5 giây, click → navigate chart VIC',
+                        'Màu: xanh khi tăng, đỏ khi giảm'
+                      ]
+                    },
+                    {
+                      name: 'Notification bell', tasks: [
+                        'Badge số unread (đỏ) trong Header',
+                        'Dropdown 5 alerts gần nhất với timestamp'
+                      ]
+                    },
+                    {
+                      name: 'Email qua BullMQ', tasks: [
+                        'BullMQ queue email-notifications',
+                        'Worker: gửi qua Nodemailer → Mailtrap.io (test inbox)',
+                        'Retry 3 lần với exponential backoff'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'p2', color: '#10b981', label: 'Phase 2', emoji: '🟢',
+          title: 'Real Data Pipeline',
+          weeks: '5 – 8',
+          goal: 'Thay dữ liệu giả lập bằng giá thật từ sàn. Thêm chart TradingView chuyên nghiệp.',
+          win: 'Giá thật từ sàn nhảy realtime trên chart. Candlestick hình thành theo tick thật!',
+          tags: ['Spring Boot', 'Java', 'ClickHouse', 'Flink', 'Python', 'TradingView'],
+          weeks_data: [
+            {
+              id: 'w5', num: 'Tuần 5', title: 'Spring Boot — Java Service đầu tiên',
+              win: 'Java service chạy. Đặt giao dịch từ UI → Java xử lý → nhận kết quả!',
+              days: [
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 21 — Spring Boot Hello World + DI so sánh NestJS',
+                  goal: '**Kết quả:** `GET /java-health` trả JSON → badge "Java Service ✅" trên Dashboard.',
+                  groups: [
+                    {
+                      name: 'Setup', tasks: [
+                        'Vào start.spring.io: chọn Spring Web + Spring Data JPA + PostgreSQL Driver + Lombok',
+                        'Download, giải nén, mở IntelliJ IDEA Community',
+                        'Chạy: ./mvnw spring-boot:run — thấy Spring Boot banner',
+                        'Tạo HealthController → GET /java-health: {"service":"portfolio","status":"ok"}',
+                        'Next.js Dashboard: fetch /java-health → badge "Java Service ✅"'
+                      ]
+                    },
+                    {
+                      name: 'Hiểu Lombok', tasks: [
+                        '@Data = getter + setter + toString (xóa boilerplate)',
+                        '@Builder = builder pattern tự động',
+                        '@Slf4j = logger tự động (dùng log.info, log.error)',
+                        'So sánh @Service/@Component/@Repository vs NestJS @Injectable()'
+                      ]
+                    }
+                  ],
+                  resources: ['start.spring.io', 'spring.io/guides']
+                },
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 22–23 — JPA + Kafka Consumer/Producer',
+                  goal: '**Kết quả:** Java nhận Kafka command → xử lý → publish response → NestJS nhận.',
+                  groups: [
+                    {
+                      name: 'Spring Data JPA', tasks: [
+                        'Cấu hình application.properties — cùng PostgreSQL container với NestJS',
+                        'Tạo Stock entity: @Entity, @Id @GeneratedValue, @Column',
+                        'StockRepository extends JpaRepository<Stock, String>',
+                        'Seed 50 mã cổ phiếu lớn (VIC, VNM, VHM, FPT...)',
+                        'GET /java/stocks → Next.js Watchlist search autocomplete dùng data này'
+                      ]
+                    },
+                    {
+                      name: 'Spring Kafka', tasks: [
+                        'Thêm spring-kafka vào pom.xml',
+                        '@KafkaListener(topics = "portfolio-commands", groupId = "portfolio-service")',
+                        'KafkaTemplate<String, String> inject và publish portfolio-events',
+                        'Test end-to-end: NestJS → Kafka → Java → Kafka → NestJS'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 24–25 — @Transactional + Request/Reply pattern',
+                  goal: '**Kết quả:** Submit form giao dịch → Java xử lý → UI nhận confirmation.',
+                  groups: [
+                    {
+                      name: '@Transactional', tasks: [
+                        'Demo rollback: insert 2 records, record 2 fail → cả 2 không commit',
+                        'Verify bằng DBeaver: sau rollback không có record nào',
+                        '@Transactional(readOnly=true) cho read queries',
+                        'Chú ý: không gọi @Transactional method trong cùng class (self-invocation bug)'
+                      ]
+                    },
+                    {
+                      name: 'Request/Reply qua Kafka', tasks: [
+                        'NestJS: publish portfolio-commands với correlationId = UUID',
+                        'Java: consume → xử lý → publish portfolio-events với cùng correlationId',
+                        'NestJS: Map<correlationId, resolve> track pending, timeout 30s',
+                        'Next.js form: nhập giao dịch → Submit → nhận "✅ Giao dịch đã ghi nhận"'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w6', num: 'Tuần 6', title: 'ClickHouse + Giá thật từ sàn',
+              win: 'Mở browser trong phiên giao dịch → thấy giá VIC thật từ TCBS nhảy realtime!',
+              days: [
+                {
+                  label: 'Database', labelClass: 'database',
+                  title: 'Ngày 26 — ClickHouse setup + Schema đầu tiên',
+                  goal: '**Kết quả:** Query 10K rows ClickHouse nhanh hơn PostgreSQL rõ ràng. Badge "ClickHouse ✅".',
+                  groups: [
+                    {
+                      name: 'Setup', tasks: [
+                        'Thêm ClickHouse vào docker-compose: clickhouse/clickhouse-server:24',
+                        'Mở ClickHouse Play: localhost:8123/play'
+                      ]
+                    },
+                    {
+                      name: 'Bảng ohlcv_1m', tasks: [
+                        'CREATE TABLE ohlcv_1m với MergeTree engine',
+                        'PARTITION BY toYYYYMM(ts), ORDER BY (symbol, ts)',
+                        'Insert 10,000 rows test data',
+                        'Benchmark: cùng query COUNT — thấy tốc độ ClickHouse vs PostgreSQL'
+                      ]
+                    }
+                  ],
+                  resources: ['clickhouse.com/docs']
+                },
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 27 — Python TCBS WebSocket Ingestor',
+                  goal: '**Kết quả:** Chạy python ingestor.py lúc 9:00 → Kafka UI thấy tick giá thật từ sàn.',
+                  groups: [
+                    {
+                      name: 'Ingestor', tasks: [
+                        'Tạo price-ingestor/ — Python project riêng',
+                        'pip install websockets kafka-python-ng python-dotenv',
+                        'Mở Chrome DevTools → vào tcbs.com.vn → Network → WS tab → tìm endpoint',
+                        'Viết ingestor.py: connect → subscribe 10 mã lớn → validate → publish Kafka',
+                        'Reconnect tự động: exponential backoff 1s → 2s → 4s → max 30s',
+                        'Test trong phiên giao dịch: Kafka UI thấy tick thật'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Backend', labelClass: 'backend',
+                  title: 'Ngày 28 — Tick thật → ClickHouse → API',
+                  goal: '**Kết quả:** Tắt Price Simulator. Giá thật chảy qua pipeline. PriceCard hiện giá sàn.',
+                  groups: [
+                    {
+                      name: 'Pipeline', tasks: [
+                        'Spring Boot consumer price-tick: buffer 200 ticks → batch insert ClickHouse',
+                        'GET /prices/latest/:symbol — query ClickHouse tick gần nhất',
+                        'GET /prices/ohlcv/:symbol?from=...&to=... — OHLCV data',
+                        'Tắt PriceSimulatorService trong NestJS',
+                        'Next.js vẫn nhận qua WebSocket — giờ là tick thật!'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Visual', labelClass: 'visual',
+                  title: 'Ngày 29–30 — TradingView Chart + Airflow DAG',
+                  goal: '**Kết quả:** Chart candlestick đẹp với dữ liệu thật. Airflow tự cập nhật OHLCV lúc 16:30.',
+                  groups: [
+                    {
+                      name: 'TradingView Lightweight Charts', tasks: [
+                        'npm install lightweight-charts',
+                        'Component CandlestickChart.tsx: load OHLCV lịch sử 7 ngày từ API',
+                        'chart.update(newCandle) khi nhận WebSocket tick',
+                        'Volume bars bên dưới chart chính',
+                        'Timeframe selector: 1m / 5m / 15m / 1h / 1D',
+                        'Click mã trong Watchlist → chart chuyển sang mã đó'
+                      ]
+                    },
+                    {
+                      name: 'Airflow DAG', tasks: [
+                        'pip install vnstock apache-airflow',
+                        'Thêm Airflow vào docker-compose',
+                        'DAG historical_price_daily: schedule 30 16 * * 1-5',
+                        'Task 1: fetch vnstock → Task 2: validate → Task 3: upsert ClickHouse',
+                        'Backfill 1 năm data cho 50 mã'
+                      ]
+                    }
+                  ],
+                  resources: ['tradingview.github.io/lightweight-charts', 'airflow.apache.org/docs']
+                }
+              ]
+            },
+            {
+              id: 'w7', num: 'Tuần 7', title: 'Flink Stream Processing + Technical Indicators',
+              win: 'Chart có RSI + MACD overlay. Indicators verify được với TradingView ±0.1!',
+              days: [
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 31 — Apache Flink setup + First Job',
+                  goal: '**Kết quả:** Flink Dashboard localhost:8081 chạy. WordCount job submit và complete.',
+                  groups: [
+                    {
+                      name: 'Setup', tasks: [
+                        'Thêm Flink 1.19 vào docker-compose',
+                        'Mở Flink Dashboard: localhost:8081',
+                        'Tạo Flink Maven project',
+                        'Viết WordCount job (classic) — chạy và verify',
+                        'Hiểu: Source → keyBy → window → aggregate → Sink',
+                        'Hiểu Event Time vs Processing Time: dùng Event Time cho finance'
+                      ]
+                    }
+                  ],
+                  resources: ['nightlies.apache.org/release/flink-docs-stable']
+                },
+                {
+                  label: 'Realtime', labelClass: 'realtime',
+                  title: 'Ngày 32–33 — Flink OHLCV + Technical Indicators',
+                  goal: '**Kết quả:** RSI(14) VIC match TradingView ±0.1. Flink thay thế batch aggregation.',
+                  groups: [
+                    {
+                      name: 'Flink Tumbling Window', tasks: [
+                        'Kafka Source → PriceTick POJO',
+                        'Watermark: 10 giây tolerance cho late events',
+                        'keyBy(symbol) → TumblingEventTimeWindows.of(1 min)',
+                        'Aggregate OHLCV + VWAP → ClickHouse sink',
+                        'So sánh kết quả vs batch cũ — phải khớp nhau'
+                      ]
+                    },
+                    {
+                      name: 'Technical Indicators (Java)', tasks: [
+                        'RSICalculator.java — Wilder\'s smoothing EMA, không dùng thư viện',
+                        'MACDCalculator.java — EMA(12) - EMA(26), Signal = EMA9',
+                        'BollingerBandsCalculator.java — MA(20) ± 2σ',
+                        'Unit test với data VIC 2023 → verify vs TradingView ±0.1',
+                        'Airflow DAG: tính indicators sau historical_price_daily'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Visual', labelClass: 'visual',
+                  title: 'Ngày 34–35 — RSI/MACD Overlay + Alert Indicator',
+                  goal: '**Kết quả:** Chart 3 panels: Candlestick + RSI + MACD. Alert rule "RSI < 30" hoạt động.',
+                  groups: [
+                    {
+                      name: 'Indicator panels', tasks: [
+                        'RSI panel: đường 70 đỏ + 30 xanh horizontal',
+                        'MACD panel: histogram + MACD line + Signal line',
+                        'Toggle buttons bật/tắt mỗi indicator',
+                        'Load data song song với OHLCV (Promise.all)'
+                      ]
+                    },
+                    {
+                      name: 'Alert + Indicator', tasks: [
+                        'Alert types mới: RSI_OVERSOLD, RSI_OVERBOUGHT, MACD_CROSS_UP',
+                        'Flink CEP: detect RSI cross dưới 30 → publish alert event',
+                        'UI: thêm indicator options trong Alert Rule builder'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w8', num: 'Tuần 8', title: 'News Crawler + AI Analyzer',
+              win: 'News panel với badge 🟢 Bullish / 🔴 Bearish. Click mã → chart load ngay!',
+              days: [
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 36–37 — Scrapy RSS Crawler + Dedup',
+                  goal: '**Kết quả:** Kafka UI thấy tin tức mới chảy vào news-raw mỗi 10 phút.',
+                  groups: [
+                    {
+                      name: 'News Crawler', tasks: [
+                        'Python project news-crawler/: Scrapy + Playwright + KafkaProducer',
+                        'Spider CafeFSpider: fetch RSS, parse title/url/pubDate',
+                        'Dedup: Redis SET seen_urls — hash URL thành SHA-256, check trước publish',
+                        'Playwright: fetch full article content, extract body text',
+                        'Publish Kafka news-raw: {url, title, content, source, published_at}',
+                        'Airflow DAG: */10 9-22 * * * (mỗi 10 phút giờ hành chính)'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Database', labelClass: 'database',
+                  title: 'Ngày 38 — Elasticsearch Vietnamese search',
+                  goal: '**Kết quả:** Search "lãi suất" → thấy tin tức liên quan. Tiếng Việt không bị lỗi dấu.',
+                  groups: [
+                    {
+                      name: 'Setup', tasks: [
+                        'Thêm Elasticsearch 8 vào docker-compose',
+                        'Cài plugin: analysis-icu cho tiếng Việt',
+                        'Index news: title (text, vi), content (text, vi), tickers (keyword), sentiment, published_at',
+                        'NestJS consumer news-raw → index ES + lưu PostgreSQL',
+                        'GET /news/search?q=vingroup&tickers=VIC — với highlight'
+                      ]
+                    }
+                  ],
+                  resources: ['elasticsearch.co/guide']
+                },
+                {
+                  label: 'AI', labelClass: 'ai',
+                  title: 'Ngày 39–40 — Claude API + Sentiment UI',
+                  goal: '**Kết quả:** Mỗi tin có badge màu + tóm tắt AI 2 câu. WebSocket push tin mới liên quan.',
+                  groups: [
+                    {
+                      name: 'AI Analyzer', tasks: [
+                        'pip install anthropic',
+                        'Buffer 10 bài → 1 Claude API call (tiết kiệm chi phí)',
+                        'Extract: tickers[], sentiment (bullish/bearish/neutral), summary 2 câu tiếng Việt',
+                        'Validate response JSON, handle lỗi format → retry hoặc skip',
+                        'Lưu news_analysis, publish news-analyzed Kafka'
+                      ]
+                    },
+                    {
+                      name: 'NewsCard UI', tasks: [
+                        'Badge màu: 🟢 Bullish / 🔴 Bearish / ⚪ Neutral',
+                        'Tóm tắt AI 2 câu — expand để đọc full',
+                        'Tags mã CK liên quan: click → mở chart',
+                        'WebSocket: tin mới về mã đang xem → toast notification'
+                      ]
+                    }
+                  ],
+                  resources: ['docs.anthropic.com']
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'p3', color: '#f59e0b', label: 'Phase 3', emoji: '🟡',
+          title: 'Java Business Logic',
+          weeks: '9 – 12',
+          goal: 'Portfolio P&L thật, Backtesting engine, Screener — tất cả thấy được trên UI.',
+          win: 'P&L realtime · Equity curve Backtest · Screener 1600 mã < 2s · Paper Trading',
+          tags: ['Event Sourcing', 'FIFO/AVCO', 'Flink CEP', 'CompletableFuture', 'Paper Trading'],
+          weeks_data: [
+            {
+              id: 'w9', num: 'Tuần 9', title: 'Portfolio Service — Event Sourcing + P&L',
+              win: 'Portfolio table P&L đang thay đổi màu xanh/đỏ theo giá sàn thật!',
+              days: [
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 41 — Event Sourcing: Concept + Schema',
+                  goal: '**Kết quả:** Hiểu tại sao financial system không UPDATE/DELETE. Transaction History immutable log.',
+                  groups: [
+                    {
+                      name: 'Concept', tasks: [
+                        'Đọc: Martin Fowler Event Sourcing (15 phút) — ghi note 3 điểm chính',
+                        'Tại sao? Audit trail đầy đủ · Time travel · Không mất lịch sử · Tuân thủ quy định'
+                      ]
+                    },
+                    {
+                      name: 'Schema + Implementation', tasks: [
+                        'Bảng transaction_events: append-only, không có UPDATE/DELETE method',
+                        'Fields: id, portfolio_id, event_type (BUY/SELL/DIVIDEND), symbol, quantity, price, fee, transaction_date, sequence_number',
+                        'Viết service: chỉ có insertEvent() — không có update/delete',
+                        'UI "Transaction History": immutable log, không có nút edit'
+                      ]
+                    }
+                  ],
+                  resources: ['martinfowler.com/eaaDev/EventSourcing']
+                },
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 42–43 — FIFO + AVCO Cost Basis',
+                  goal: '**Kết quả:** Unit test xanh với ví dụ số cụ thể: Mua 100@50k + 200@60k, Bán 150 → cost 53,333đ.',
+                  groups: [
+                    {
+                      name: 'FIFO Algorithm', tasks: [
+                        'Implement TaxLot: {quantity, price, date}',
+                        'BUY: tạo TaxLot mới, thêm vào list',
+                        'SELL: tiêu thụ lots từ cũ nhất (FIFO)',
+                        'Ví dụ: Mua 100@50k (Lot1), Mua 200@60k (Lot2), Bán 150',
+                        'Kết quả: dùng hết Lot1 + 50 từ Lot2, cost = 53,333đ'
+                      ]
+                    },
+                    {
+                      name: 'AVCO Algorithm', tasks: [
+                        'Mua 100@50k → avg=50k',
+                        'Mua 100@60k → avg_new = (50k×100 + 60k×100)/200 = 55k',
+                        'Bán 50: cost = 55k × 50 (avg_cost không đổi)',
+                        'Unit test 5 scenarios với số liệu cụ thể',
+                        'Form chọn phương pháp khi tạo portfolio'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Realtime', labelClass: 'realtime',
+                  title: 'Ngày 44 — P&L Realtime theo giá tick',
+                  goal: '**Kết quả:** Portfolio table cột P&L đang thay đổi số và màu theo giá sàn thật.',
+                  groups: [
+                    {
+                      name: 'Backend', tasks: [
+                        'Consumer price-tick → cache positions Redis per symbol',
+                        'Tính unrealized_pnl = (price - avg_cost) × quantity',
+                        'Throttle: 1 update/giây/user (tránh flood)',
+                        'Publish portfolio-events per user'
+                      ]
+                    },
+                    {
+                      name: 'UI Portfolio page', tasks: [
+                        'Position table: Mã | SL | Giá vốn | Giá hiện tại | P&L | P&L%',
+                        'Màu: text-emerald-500 khi lãi / text-red-500 khi lỗ',
+                        'Counter animation smooth khi số thay đổi',
+                        'NAV tổng ở đầu cập nhật realtime'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Visual', labelClass: 'visual',
+                  title: 'Ngày 45 — Analytics + CSV Import',
+                  goal: '**Kết quả:** Sector chart + Daily return vs VN-Index. Import được file từ TCBS/SSI.',
+                  groups: [
+                    {
+                      name: 'Analytics', tasks: [
+                        'Sector allocation: Recharts PieChart',
+                        'Daily return vs VN-Index: Recharts LineChart 2 series 30 ngày',
+                        'Compare vs VN-Index benchmark từ ClickHouse'
+                      ]
+                    },
+                    {
+                      name: 'CSV Import', tasks: [
+                        'Upload file CSV từ VCBS/SSI/TCBS',
+                        'Preview: hiển thị bảng trước khi confirm',
+                        'Import: bulk insert transaction events',
+                        'Test file 20 giao dịch → portfolio state đúng'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w10', num: 'Tuần 10', title: 'Backtesting Engine — Equity Curve',
+              win: 'Backtest RSI 1 năm xong trong 10 giây. Equity curve + Sharpe ratio xuất hiện!',
+              days: [
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 46 — Strategy DSL Parser',
+                  goal: '**Kết quả:** Parse strategy JSON → Java objects. Next.js Strategy Builder generates JSON đúng.',
+                  groups: [
+                    {
+                      name: 'DSL', tasks: [
+                        'Strategy class hierarchy: Strategy → Rule → Operator enum (LT, GT, EQ...)',
+                        'Jackson custom deserializer cho Strategy JSON',
+                        'Validator: period ≥ 3 tháng, ít nhất 1 entry rule, capital > 0',
+                        'Unit test: parse strategy JSON từ spec, verify fields'
+                      ]
+                    },
+                    {
+                      name: 'Strategy Builder UI', tasks: [
+                        'Add/Remove conditions dynamically',
+                        'Dropdown: Indicator → Operator → Value',
+                        'Real-time JSON preview trong panel bên cạnh'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 47–48 — Simulation Loop + Performance Metrics',
+                  goal: '**Kết quả:** Simulation RSI VIC 2023 ra kết quả Sharpe ratio và equity curve đúng logic.',
+                  groups: [
+                    {
+                      name: 'Simulation Loop', tasks: [
+                        'Load OHLCV daily từ ClickHouse cho period',
+                        'Mỗi ngày: check stop-loss/take-profit trước (dùng candle.low/high)',
+                        'Tính indicators đến ngày đó (KHÔNG dùng dữ liệu tương lai!)',
+                        'Evaluate entry rules → BUY tại close + slippage',
+                        'Evaluate exit rules → SELL tại close - slippage',
+                        'Track equity_curve[], trade_log[]'
+                      ]
+                    },
+                    {
+                      name: 'Performance Metrics', tasks: [
+                        'Total Return = (final - initial) / initial × 100%',
+                        'Annualized Return = ((1 + total)^(365/days)) - 1',
+                        'Sharpe Ratio = avg_daily_return / std × √252',
+                        'Max Drawdown = max((peak - trough) / peak)',
+                        'Win Rate = profitable_trades / total_trades',
+                        'Profit Factor = sum(wins) / abs(sum(losses))'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Realtime', labelClass: 'realtime',
+                  title: 'Ngày 49 — Async Job + Progress Stream',
+                  goal: '**Kết quả:** Submit backtest → progress bar 0→100% realtime. Cancel button hoạt động.',
+                  groups: [
+                    {
+                      name: 'Async + Progress', tasks: [
+                        'CompletableFuture + thread pool max 10 concurrent jobs',
+                        'Publish backtest-progress mỗi 5%: {job_id, progress, current_date}',
+                        'NestJS consumer → Redis PUBLISH → WebSocket → client progress bar',
+                        'Cancel: set cancellation flag, thread check và dừng trong 5 giây',
+                        'Job timeout: tự động cancel sau 5 phút'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Visual', labelClass: 'visual',
+                  title: 'Ngày 50 — Result UI: Equity Curve + Metrics',
+                  goal: '**Kết quả:** Trang kết quả đẹp với equity curve 2 lines và metrics cards đầy đủ.',
+                  groups: [
+                    {
+                      name: 'Result UI', tasks: [
+                        'Equity curve: Recharts LineChart — strategy vs VN-Index benchmark',
+                        'Metrics cards: Total Return | Sharpe | Max Drawdown | Win Rate | # Trades',
+                        'Trade history table: entry/exit date, price, P&L, reason',
+                        'Save result → lưu DB',
+                        'History page: danh sách backtests đã chạy, click xem lại'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w11', num: 'Tuần 11', title: 'Stock Screener + Alert Polish',
+              win: 'Screener scan 1600 mã trong 2 giây. Badge "1.2s ⚡" hiển thị trên UI!',
+              days: [
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 51–52 — Filter DSL Transpiler + ClickHouse Scan',
+                  goal: '**Kết quả:** Scan 1600 mã với 3 conditions < 2 giây. Badge latency trên UI.',
+                  groups: [
+                    {
+                      name: 'DSL Transpiler', tasks: [
+                        'DSLParser.java: JSON {AND/OR, field, op, val} → ClickHouse SQL',
+                        'Xử lý nested: {AND: [{...}, {OR: [{...}, {...}]}]}',
+                        'Parameterized queries — chống SQL injection',
+                        'Test 5 filter examples, verify SQL output đúng'
+                      ]
+                    },
+                    {
+                      name: 'Performance', tasks: [
+                        'Query ClickHouse: join ohlcv_daily + indicators + stock_metadata',
+                        'Benchmark với 1600 mã: phải < 2 giây',
+                        'Nếu > 2s: EXPLAIN, thêm index, optimize',
+                        'Cache Redis: hash(DSL) → results, TTL 10 phút'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Visual', labelClass: 'visual',
+                  title: 'Ngày 51–52 (cont.) — Screener UI',
+                  goal: '**Kết quả:** Visual filter builder auto-run khi đổi. "Scanned 1,623 stocks in 1.2s ⚡".',
+                  groups: [
+                    {
+                      name: 'Screener UI', tasks: [
+                        'Visual filter builder: add/remove conditions, AND/OR toggle',
+                        'Auto-run khi thay đổi filter (debounce 500ms)',
+                        'Results table với sort và click → mở chart bên cạnh',
+                        'Latency badge: "Scanned 1,623 stocks in 1.2s ⚡"',
+                        'Pre-built templates: "RSI Oversold", "Golden Cross", "Volume Breakout"'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 53–55 — Saved Screener + Alert History + Review',
+                  goal: '**Kết quả:** Saved screener chạy tự động mỗi 16:30. Alert history page đầy đủ.',
+                  groups: [
+                    {
+                      name: 'Saved Screener', tasks: [
+                        'CRUD saved_screeners table',
+                        'Airflow DAG: chạy lúc 16:30 mỗi ngày làm việc',
+                        'Compare kết quả: notify khi mã mới lọt / rớt ra'
+                      ]
+                    },
+                    {
+                      name: 'Alert Polish', tasks: [
+                        'Alert history page: timeline filter theo mã/loại/thời gian',
+                        '"Snooze" button: tắt rule 24h',
+                        'Stats: rule nào trigger nhiều nhất'
+                      ]
+                    },
+                    {
+                      name: 'Review tuần 11', tasks: [
+                        'Test toàn bộ screener flow',
+                        'Fix top 3 bugs tìm được',
+                        'Commit và self-review code'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w12', num: 'Tuần 12', title: 'Paper Trading + Social Feed',
+              win: 'Đặt lệnh mua VIC 100 cổ → khớp theo giá thật → P&L update realtime!',
+              days: [
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 56–57 — Paper Trading Order Engine',
+                  goal: '**Kết quả:** Market order khớp ngay, Limit order chờ giá. Positions table P&L realtime.',
+                  groups: [
+                    {
+                      name: 'Schema + Orders', tasks: [
+                        'Schema: paper_accounts, paper_orders, paper_positions, paper_executions',
+                        'Market Order: last_tick × (1 + 0.0015 slippage) + commission',
+                        'Limit Order: Redis Sorted Set, match khi tick thỏa mãn giá',
+                        'NAV = cash + Σ(qty × current_price): cập nhật mỗi phút'
+                      ]
+                    },
+                    {
+                      name: 'UI Paper Trading', tasks: [
+                        'Order form: Market/Limit, Buy/Sell, Symbol, Qty',
+                        'Positions table với P&L realtime (dùng lại usePriceFeed)',
+                        'Cash balance + NAV hiển thị nổi bật',
+                        'Execution history'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Backend', labelClass: 'backend',
+                  title: 'Ngày 58–59 — Leaderboard + Social Feed',
+                  goal: '**Kết quả:** Leaderboard top 50 users. Comment realtime push qua WebSocket.',
+                  groups: [
+                    {
+                      name: 'Leaderboard', tasks: [
+                        'Redis Sorted Set: ZADD leaderboard:monthly score userId',
+                        'GET /paper-trading/leaderboard — top 50',
+                        'Privacy: option ẩn danh trên leaderboard',
+                        'Reset ngày 1 hàng tháng, Hall of Fame lưu top 3'
+                      ]
+                    },
+                    {
+                      name: 'Social Feed', tasks: [
+                        'Post bình luận per mã (max 500 ký tự)',
+                        'Upvote, comment threading',
+                        'Hot score: (votes + comments×0.5) / (age+2)^1.5',
+                        'Realtime: comment mới → WebSocket push tới users đang xem'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Review', labelClass: 'review',
+                  title: 'Ngày 60 — End-to-end Review + Bug fixes',
+                  goal: '**Kết quả:** Mời bạn bè thử — họ tự dùng được mà không cần hướng dẫn.',
+                  groups: [
+                    {
+                      name: 'Test + Fix', tasks: [
+                        'Test toàn bộ journey: Register → Watchlist → Alert → Portfolio → Backtest → Screener → Paper Trading',
+                        'Fix top 5 bugs quan trọng nhất từ testing',
+                        'Commit tag v3.0-phase3',
+                        'Mời bạn bè thử → nhận feedback thật'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'p4', color: '#a855f7', label: 'Phase 4', emoji: '🟣',
+          title: 'Billing + Advanced Polish',
+          weeks: '13 – 16',
+          goal: 'User nâng cấp Pro được. App mobile-ready. Performance tối ưu.',
+          win: 'Nâng cấp Pro (test card) → features unlock ngay. Lighthouse > 80. E2E test xanh!',
+          tags: ['Stripe', 'Spring Statemachine', 'Playwright E2E', 'k6 Load Test', 'Mobile'],
+          weeks_data: [
+            {
+              id: 'w13', num: 'Tuần 13', title: 'Billing — Stripe + State Machine',
+              win: 'Click "Nâng cấp Pro" → Stripe → thanh toán → features mở ngay!',
+              days: [
+                {
+                  label: 'Billing', labelClass: 'billing',
+                  title: 'Ngày 61–62 — Stripe Checkout + Idempotent Webhook',
+                  goal: '**Kết quả:** Test card 4242 4242 4242 4242 → thanh toán → subscription active.',
+                  groups: [
+                    {
+                      name: 'Stripe setup', tasks: [
+                        'Tạo Stripe test account, tạo Product "Radar Pro" 99,000đ/tháng',
+                        'POST /billing/create-checkout-session → redirect URL',
+                        'Stripe CLI: stripe listen --forward-to localhost:8081/billing/webhook',
+                        'Test card: 4242 4242 4242 4242, any expiry, any CVC'
+                      ]
+                    },
+                    {
+                      name: 'Idempotent Webhook', tasks: [
+                        'Verify HMAC signature của mọi webhook request',
+                        'INSERT INTO processed_events (event_id) ON CONFLICT DO NOTHING',
+                        'Nếu conflict (event đã xử lý): return 200 ngay, không xử lý lại',
+                        'Handle: checkout.session.completed, invoice.payment_succeeded, invoice.payment_failed'
+                      ]
+                    }
+                  ],
+                  resources: ['stripe.com/docs', 'stripe.com/docs/webhooks']
+                },
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 63 — Spring Statemachine: Subscription Lifecycle',
+                  goal: '**Kết quả:** Test từng transition: ACTIVE → PAYMENT_FAILED → PAST_DUE → 3 ngày → CANCELLED.',
+                  groups: [
+                    {
+                      name: 'State Machine', tasks: [
+                        'States: NONE, TRIALING (14 ngày), ACTIVE, PAST_DUE (3 ngày grace), CANCELLED',
+                        'Events: CHECKOUT_COMPLETED, PAYMENT_SUCCEEDED, PAYMENT_FAILED, CANCEL',
+                        'Mỗi transition: publish billing-events Kafka → NestJS update Redis cache plan',
+                        'Unit test từng transition với Spring Statemachine Test'
+                      ]
+                    }
+                  ],
+                  resources: ['docs.spring.io/spring-statemachine']
+                },
+                {
+                  label: 'Backend', labelClass: 'backend',
+                  title: 'Ngày 64–65 — Usage Metering + Billing UI',
+                  goal: '**Kết quả:** FREE user thấy "3/3 backtests used" + upgrade CTA. Pricing page đẹp.',
+                  groups: [
+                    {
+                      name: 'Usage Metering', tasks: [
+                        'Redis counter: usage:{userId}:backtests:{YYYY-MM} — INCR + check trước',
+                        'FREE limits: 3 backtests/tháng, 2 saved screeners',
+                        'Sync Redis → PostgreSQL mỗi giờ (Airflow)',
+                        'GET /billing/subscription: {plan, status, usage: {used, limit}}'
+                      ]
+                    },
+                    {
+                      name: 'Billing UI', tasks: [
+                        'Pricing page: Free vs Pro comparison table',
+                        'Upgrade flow: click → Stripe → "Chào mừng Pro! 🎉" → features unlock',
+                        'Invoice history với PDF links từ Stripe API',
+                        'Cancel subscription với confirmation dialog'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w14', num: 'Tuần 14', title: 'Mobile + UX Polish',
+              win: 'App mượt trên điện thoại thật. Mọi page đều có loading/error/empty state đẹp.',
+              days: [
+                {
+                  label: 'Frontend', labelClass: 'frontend',
+                  title: 'Ngày 66–68 — Responsive + UX States',
+                  goal: '**Kết quả:** Toàn bộ app dùng được trên mobile 375px. Touch targets đủ lớn.',
+                  groups: [
+                    {
+                      name: 'Responsive', tasks: [
+                        'Test toàn bộ pages trên Chrome DevTools mobile 375px',
+                        'Touch targets ≥ 44px cho tất cả buttons/links',
+                        'Bottom navigation bar cho mobile (thay sidebar)',
+                        'Test trên điện thoại thật — không chỉ simulator'
+                      ]
+                    },
+                    {
+                      name: 'UX States', tasks: [
+                        'Loading skeleton cho mọi data fetch (không có spinner trắng)',
+                        'Error state với retry button và error message rõ ràng',
+                        'Empty state với helpful CTA (không có trang trắng)',
+                        'Edit window cho social posts (15 phút)'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Frontend', labelClass: 'frontend',
+                  title: 'Ngày 69–70 — Notification + Profile UI',
+                  goal: '**Kết quả:** Notification Center đầy đủ. Profile + Settings page hoàn chỉnh.',
+                  groups: [
+                    {
+                      name: 'Notification Center', tasks: [
+                        'Notification bell: badge count + dropdown 5 gần nhất',
+                        'Full notification page: filter theo loại, mark as read',
+                        'Notification preferences: quiet hours (22:00-7:00)',
+                        'Daily digest email toggle'
+                      ]
+                    },
+                    {
+                      name: 'Profile + Settings', tasks: [
+                        'Profile page: avatar, join date, stats',
+                        'Settings: password change, notification prefs, plan info',
+                        'Dark mode toggle (optional)'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w15', num: 'Tuần 15', title: 'Performance Optimization',
+              win: 'Lighthouse > 80 trên mobile. First Load JS < 200KB. App load < 3 giây.',
+              days: [
+                {
+                  label: 'Frontend', labelClass: 'frontend',
+                  title: 'Ngày 71–73 — Bundle Size + Caching',
+                  goal: '**Kết quả:** Bundle analyzer hiển thị chunks. Dynamic import giảm First Load JS.',
+                  groups: [
+                    {
+                      name: 'Bundle optimization', tasks: [
+                        'npm install @next/bundle-analyzer',
+                        'Dynamic import TradingView: const Chart = dynamic(() => import(...))',
+                        'Dynamic import Recharts charts',
+                        'Target: First Load JS < 200KB'
+                      ]
+                    },
+                    {
+                      name: 'Data caching', tasks: [
+                        'React Query: staleTime phù hợp từng loại data',
+                        'Giá realtime: staleTime=0 (luôn fresh)',
+                        'Indicators: staleTime=5min (tính cuối phiên)',
+                        'Historical OHLCV: staleTime=30min'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 74–75 — Lighthouse + ClickHouse Query Optimization',
+                  goal: '**Kết quả:** Lighthouse Performance > 80. Screener query explain clean.',
+                  groups: [
+                    {
+                      name: 'Lighthouse', tasks: [
+                        'Run Lighthouse audit trên mobile mode',
+                        'Fix LCP: optimize largest image/element',
+                        'Fix CLS: set width/height trên images',
+                        'Fix FID: defer non-critical scripts',
+                        'Target: Performance > 80, Accessibility > 90'
+                      ]
+                    },
+                    {
+                      name: 'ClickHouse', tasks: [
+                        'EXPLAIN PIPELINE cho các query chậm',
+                        'Add index nếu cần: ALTER TABLE ADD INDEX',
+                        'Materialized Views cho aggregation thường dùng'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w16', num: 'Tuần 16', title: 'Integration Tests + E2E',
+              win: 'Playwright E2E test xanh. k6 load test: p95 < 500ms với 100 users!',
+              days: [
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 76–78 — Playwright E2E Tests',
+                  goal: '**Kết quả:** 3 critical path tests chạy xanh trong CI pipeline.',
+                  groups: [
+                    {
+                      name: 'E2E Tests', tasks: [
+                        'npm install @playwright/test',
+                        'Test 1: Register → verify → login → add watchlist → create alert → trigger alert',
+                        'Test 2: Create portfolio → add transactions → view P&L',
+                        'Test 3: Upgrade Pro (test card) → run backtest → view result',
+                        'Thêm vào GitHub Actions CI: chạy tests trên mỗi PR'
+                      ]
+                    }
+                  ],
+                  resources: ['playwright.dev/docs']
+                },
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 79–80 — k6 Load Test + Bug Fixes',
+                  goal: '**Kết quả:** 100 concurrent users, p95 < 500ms, error rate < 0.1%.',
+                  groups: [
+                    {
+                      name: 'Load Test', tasks: [
+                        'Cài k6: k6.io/docs/get-started/installation',
+                        'Viết test script: 100 users đồng thời, login + watchlist + WebSocket',
+                        'Chạy: k6 run --vus 100 --duration 3m load_test.js',
+                        'Fix bottlenecks: thêm index DB, scale Kafka partitions nếu cần'
+                      ]
+                    },
+                    {
+                      name: 'Bug fixes', tasks: [
+                        'Fix top 10 issues tìm được từ E2E và load test',
+                        'Review: không có route nào thiếu auth guard',
+                        'Commit tag v4.0-phase4'
+                      ]
+                    }
+                  ],
+                  resources: ['k6.io/docs']
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'p5', color: '#f97316', label: 'Phase 5', emoji: '🟠',
+          title: 'Deploy & Production',
+          weeks: '17 – 20',
+          goal: 'App chạy trên domain thật, monitoring xanh, load tested.',
+          win: 'Gửi link radarstock.vn cho bạn bè → họ vào được. Grafana dashboard xanh!',
+          tags: ['Docker', 'Hetzner VPS', 'Nginx', 'GitHub Actions', 'Prometheus', 'Grafana', 'ELK'],
+          weeks_data: [
+            {
+              id: 'w17', num: 'Tuần 17', title: 'Docker Production + VPS Deploy',
+              win: 'App chạy trên domain thật! Gửi link cho bạn bè → họ dùng được ngay!',
+              days: [
+                {
+                  label: 'Deploy', labelClass: 'deploy',
+                  title: 'Ngày 81–83 — Docker Production Images',
+                  goal: '**Kết quả:** Tất cả services build được image production. docker-compose.prod.yml chạy được.',
+                  groups: [
+                    {
+                      name: 'Dockerfiles', tasks: [
+                        'Multi-stage Dockerfile NestJS: build stage + production (non-root user, health check)',
+                        'Multi-stage Dockerfile Spring Boot: JRE 21 slim, non-root user',
+                        'Dockerfile Next.js: standalone output, non-root',
+                        'Dockerfile Python services: slim python image',
+                        'docker-compose.prod.yml với resource limits và health checks',
+                        'Test: build tất cả images locally, run và verify'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Deploy', labelClass: 'deploy',
+                  title: 'Ngày 84–85 — VPS Setup + CI/CD',
+                  goal: '**Kết quả:** Push code → GitHub Actions deploy tự động → app cập nhật trên domain.',
+                  groups: [
+                    {
+                      name: 'VPS Hetzner', tasks: [
+                        'Tạo Hetzner CX31 (4 vCPU, 8GB, ~$10/tháng)',
+                        'SSH key setup, cài Docker + Docker Compose',
+                        'Nginx reverse proxy: radarstock.vn → services',
+                        'SSL Let\'s Encrypt: certbot --nginx',
+                        'Deploy: docker-compose -f docker-compose.prod.yml up -d',
+                        'Verify: truy cập domain thật → app hoạt động'
+                      ]
+                    },
+                    {
+                      name: 'CI/CD GitHub Actions', tasks: [
+                        'ci.yml: push → lint → test → build Docker image',
+                        'deploy.yml: push main → SSH → pull image → restart services',
+                        'Secrets: VPS_HOST, VPS_USER, VPS_SSH_KEY, DOCKER credentials',
+                        'Giữ 3 image versions gần nhất cho rollback'
+                      ]
+                    }
+                  ],
+                  resources: ['hetzner.com/cloud', 'docs.github.com/en/actions']
+                }
+              ]
+            },
+            {
+              id: 'w18', num: 'Tuần 18', title: 'Monitoring + Observability',
+              win: 'Grafana dashboard xanh. Biết ngay khi có vấn đề trước user báo!',
+              days: [
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 86–88 — Prometheus + Grafana',
+                  goal: '**Kết quả:** Grafana dashboard với 5 panels key metrics. Alert Slack khi có vấn đề.',
+                  groups: [
+                    {
+                      name: 'Metrics', tasks: [
+                        'Thêm Prometheus + Grafana vào docker-compose',
+                        'NestJS: @nestjs/terminus expose /metrics',
+                        'Spring Boot: Actuator + Micrometer',
+                        'Grafana dashboards: Kafka lag · API latency p50/p95/p99 · WebSocket connections · JVM heap · Error rate',
+                        'AlertManager: Kafka lag > 10k, error rate > 1% → Slack/email'
+                      ]
+                    }
+                  ],
+                  resources: ['prometheus.io/docs', 'grafana.com/docs']
+                },
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 89–90 — ELK Logging + Distributed Tracing',
+                  goal: '**Kết quả:** Log tập trung trong Kibana. Trace request qua nhiều services trong Jaeger.',
+                  groups: [
+                    {
+                      name: 'Logging', tasks: [
+                        'Structured JSON logs: pino cho Node, logstash-encoder cho Java',
+                        'Correlation ID qua tất cả services (request-id header)',
+                        'ELK Stack: Elasticsearch + Logstash + Kibana',
+                        'Kibana dashboard: error logs, slow queries'
+                      ]
+                    },
+                    {
+                      name: 'Tracing', tasks: [
+                        'OpenTelemetry NestJS: @opentelemetry/sdk-node',
+                        'Spring Boot Micrometer Tracing + Zipkin/Jaeger',
+                        'Trace một request end-to-end: NestJS → Kafka → Spring → DB',
+                        'Identify bottlenecks từ trace data'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w19', num: 'Tuần 19', title: 'Load Test + Security Hardening',
+              win: '200 concurrent users, p95 < 500ms. Security scan clean. App production-ready!',
+              days: [
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 91–93 — k6 Load Test 200 Users',
+                  goal: '**Kết quả:** 200 concurrent users × 5 phút. p95 < 500ms, error rate < 0.1%.',
+                  groups: [
+                    {
+                      name: 'Load Test', tasks: [
+                        'Viết k6 script: 200 users — login + watchlist + subscribe WebSocket + view portfolio',
+                        'Chạy: k6 run --vus 200 --duration 5m load_test.js',
+                        'Xem kết quả: p50, p95, p99 latency, throughput, error rate',
+                        'Fix bottlenecks: scale ClickHouse replicas, tăng Kafka partitions',
+                        'Re-run sau khi fix: verify metrics đạt target'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Infra', labelClass: 'infra',
+                  title: 'Ngày 94–95 — Security Hardening',
+                  goal: '**Kết quả:** npm audit clean. Security headers. Không có route nào thiếu auth guard.',
+                  groups: [
+                    {
+                      name: 'Security', tasks: [
+                        'npm audit fix — resolve all high severity',
+                        'mvn dependency-check:check — fix Java CVEs',
+                        'Helmet.js: CSP, HSTS, X-Frame-Options, X-Content-Type',
+                        'CORS production: chỉ cho phép domain thật',
+                        'Verify tất cả API routes có auth guard (grep codebase)',
+                        'Rate limiting production: strict hơn dev',
+                        'Test với OWASP ZAP basic scan'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w20', num: 'Tuần 20', title: 'Documentation + API Docs',
+              win: 'README đầy đủ. Swagger docs. Người mới clone về có thể setup được!',
+              days: [
+                {
+                  label: 'Deploy', labelClass: 'deploy',
+                  title: 'Ngày 96–100 — Docs + Swagger + README',
+                  goal: '**Kết quả:** Swagger UI tại /api/docs. README với Mermaid architecture diagram.',
+                  groups: [
+                    {
+                      name: 'Documentation', tasks: [
+                        'Architecture README với Mermaid diagrams (tổng quan + data flow)',
+                        'Setup guide: clone → docker-compose up → chạy được',
+                        'Environment variables: tất cả vars với description và example',
+                        'CHANGELOG.md: những gì đã build 20 tuần'
+                      ]
+                    },
+                    {
+                      name: 'API Docs', tasks: [
+                        'NestJS: @nestjs/swagger — @ApiProperty, @ApiOperation, @ApiResponse',
+                        'Swagger UI tại /api/docs — tất cả endpoints documented',
+                        'Java: OpenAPI 3.0 annotation',
+                        'Test: người khác đọc docs và gọi API được không cần hỏi'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'p6', color: '#6b7280', label: 'Phase 6', emoji: '🟤',
+          title: 'Final Polish & Demo Day',
+          weeks: '21 – 24',
+          goal: 'Polish final features, portfolio showcase, Demo Day hoành tráng.',
+          win: '24 tuần · 20+ công nghệ · Production deployment · Demo 5 phút đầy đủ tính năng!',
+          tags: ['Webhook', 'Multi-portfolio', 'Tax Report', 'Blog Post', 'Demo Day', 'LinkedIn'],
+          weeks_data: [
+            {
+              id: 'w21', num: 'Tuần 21', title: 'Final Features — Webhook + Multi-portfolio',
+              win: 'Webhook delivery hoàn chỉnh. Multi-portfolio analytics. Tax report export!',
+              days: [
+                {
+                  label: 'Backend', labelClass: 'backend',
+                  title: 'Ngày 101–103 — Webhook Delivery System',
+                  goal: '**Kết quả:** Webhook gửi HMAC signed. Retry exponential backoff. Delivery log UI.',
+                  groups: [
+                    {
+                      name: 'Webhook System', tasks: [
+                        'CRUD webhook endpoints: URL, secret, events[] user muốn subscribe',
+                        'HMAC-SHA256 signature: header X-Radar-Signature: sha256={hash}',
+                        'Timestamp trong payload: chống replay attack (window 5 phút)',
+                        'BullMQ retry: 5 lần với 1s, 2s, 4s, 8s, 16s backoff',
+                        'Auto-disable sau 10 lần thất bại liên tiếp, notify user',
+                        'Delivery log UI: status, response time, response body, retry count'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Java', labelClass: 'java',
+                  title: 'Ngày 104–105 — Multi-portfolio + Tax Report',
+                  goal: '**Kết quả:** Compare 2 portfolios. Tax report CSV export đúng năm tài chính VN.',
+                  groups: [
+                    {
+                      name: 'Multi-portfolio', tasks: [
+                        'Multiple portfolios per user (FREE: 1, PRO: không giới hạn)',
+                        'Compare 2 portfolios trên cùng timeline',
+                        'Copy portfolio, rename, archive'
+                      ]
+                    },
+                    {
+                      name: 'Tax Report', tasks: [
+                        'Tổng realized gain/loss theo năm tài chính (01/01-31/12)',
+                        'Tách short-term vs long-term holding',
+                        'Export CSV cho khai thuế',
+                        'Dividend income tracking'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w22', num: 'Tuần 22', title: 'Final Bug Fixes + Polish',
+              win: 'Top 10 bugs fixed. App feel polished và professional!',
+              days: [
+                {
+                  label: 'Review', labelClass: 'review',
+                  title: 'Ngày 106–110 — Bug Fixes + Final Polish',
+                  goal: '**Kết quả:** Top 10 bugs fixed. App feel polished và professional!',
+                  groups: [
+                    {
+                      name: 'Bug fixes', tasks: [
+                        'Liệt kê tất cả TODO comments trong codebase (grep "TODO\\|FIXME\\|HACK")',
+                        'Fix top 10 issues quan trọng nhất',
+                        'Review code với fresh eyes: naming, error handling, no magic numbers',
+                        'Refactor những chỗ xấu nhất'
+                      ]
+                    },
+                    {
+                      name: 'Polish', tasks: [
+                        'Animation transitions mượt hơn giữa các trang',
+                        'Loading states consistent toàn app',
+                        'Error messages helpful và actionable',
+                        'Favicon, meta tags, og:image cho social share',
+                        'Test trên nhiều browsers: Chrome, Safari, Firefox'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w23', num: 'Tuần 23', title: 'Portfolio Showcase + Blog Post',
+              win: 'LinkedIn post viral. Blog bài nhận nhiều reaction. System design answers sẵn sàng!',
+              days: [
+                {
+                  label: 'Deploy', labelClass: 'deploy',
+                  title: 'Ngày 111–113 — Demo Video + LinkedIn',
+                  goal: '**Kết quả:** Demo video 5 phút upload. LinkedIn post với screenshots đẹp.',
+                  groups: [
+                    {
+                      name: 'Demo preparation', tasks: [
+                        'Viết demo script chi tiết: từng giây, từng action',
+                        'Record demo video 5 phút trong phiên giao dịch 9:00-9:30',
+                        'Edit video: captions + background music nhẹ',
+                        'LinkedIn post: 3-5 screenshots đẹp + story building journey'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Review', labelClass: 'review',
+                  title: 'Ngày 114–115 — Blog Post + Interview Prep',
+                  goal: '**Kết quả:** Blog post live. System design answers viết xong cho 4 câu hỏi lớn.',
+                  groups: [
+                    {
+                      name: 'Blog post', tasks: [
+                        '"6 tháng build Radar Stock VN — những gì tôi học được"',
+                        'Architecture diagram, key decisions, mistakes và lessons',
+                        'Publish trên dev.to, viblo.asia, hoặc blog cá nhân'
+                      ]
+                    },
+                    {
+                      name: 'Interview prep', tasks: [
+                        '"Tại sao dùng Kafka thay HTTP trực tiếp?" → loose coupling, resilience, replay',
+                        '"Làm sao scale WebSocket 10k users?" → Redis adapter, horizontal pod scaling',
+                        '"Event Sourcing cho financial system — trade-offs?" → storage vs benefits',
+                        '"ClickHouse vs PostgreSQL — khi nào dùng cái nào?" → OLAP vs OLTP'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 'w24', num: 'Tuần 24', title: '🎉 DEMO DAY',
+              win: '24 tuần · 20+ công nghệ · Production · Demo 5 phút đầy đủ tính năng!',
+              days: [
+                {
+                  label: 'Deploy', labelClass: 'deploy',
+                  title: 'Ngày 116–118 — Final Prep + Dry Run',
+                  goal: '**Kết quả:** Demo chạy mượt không bị lỗi. Checklist đầy đủ.',
+                  groups: [
+                    {
+                      name: 'Final checklist', tasks: [
+                        'Tất cả services healthy trên production',
+                        'Grafana: tất cả metrics xanh',
+                        'Run demo script 3 lần để thuộc flow',
+                        'Backup plan: nếu production lỗi → có localhost backup',
+                        'Test trong phiên giao dịch thật để verify giá realtime'
+                      ]
+                    }
+                  ]
+                },
+                {
+                  label: 'Review', labelClass: 'review',
+                  title: 'Ngày 119–120 — DEMO DAY 🎉',
+                  goal: '**Kết quả:** Demo 5 phút đầy đủ. Chia sẻ link cho mọi người. Celebrate!',
+                  groups: [
+                    {
+                      name: 'Demo Script (5 phút)', tasks: [
+                        '0:00 — Login → Dashboard: badge services xanh, 5 giá đang nhảy',
+                        '0:30 — Watchlist: thêm VIC, thấy giá realtime + % thay đổi',
+                        '1:00 — Chart VIC: candlestick đang hình thành + RSI + MACD',
+                        '1:30 — Tạo Alert: VIC > ngưỡng → trigger → toast notification',
+                        '2:00 — Portfolio: P&L unrealized thay đổi theo giá',
+                        '2:30 — Backtest RSI strategy → progress 0→100% → equity curve',
+                        '3:00 — Screener RSI < 30 → 1600 mã trong 2 giây',
+                        '3:30 — Paper Trading: đặt lệnh → khớp → P&L update',
+                        '4:00 — Upgrade Pro (test card) → features unlock',
+                        '4:30 — Grafana: metrics dashboard — system healthy'
+                      ]
+                    },
+                    {
+                      name: 'Celebrate! 🎊', tasks: [
+                        'Chia sẻ link app cho bạn bè và cộng đồng',
+                        'Post trên các group học lập trình VN',
+                        'Nhìn lại: 24 tuần trước bạn đang ở đâu, hôm nay bạn đang ở đâu',
+                        'Lên kế hoạch tiếp theo: job applications, next project, side income?'
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    const STORAGE_KEY = 'radar_tasks_v2';
+    let checked = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+    function saveChecked() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
+      updateGlobalStats();
+    }
+
+    function updateGlobalStats() {
+      let total = 0, done = 0;
+      document.querySelectorAll('.task-cb').forEach(cb => {
+        total++;
+        if (cb.classList.contains('checked')) done++;
+      });
+      document.getElementById('total-count').textContent = total;
+      document.getElementById('done-count').textContent = done;
+      const pct = total > 0 ? Math.round(done / total * 100) : 0;
+      document.getElementById('global-progress').style.width = pct + '%';
+      document.getElementById('pct-label').textContent = pct + '%';
+
+      DATA.phases.forEach(ph => {
+        const fill = document.querySelector(`.pcard-fill-${ph.id}`);
+        if (!fill) return;
+        let pt = 0, pd = 0;
+        ph.weeks_data.forEach(w => {
+          w.days.forEach(d => {
+            d.groups.forEach(g => {
+              g.tasks.forEach(t => {
+                pt++;
+                const tid = btoa(encodeURIComponent(t)).substring(0, 16);
+                if (checked[tid]) pd++;
+              });
+            });
+          });
+        });
+        const pp = pt > 0 ? Math.round(pd / pt * 100) : 0;
+        fill.style.width = pp + '%';
+        const sidebarProg = document.querySelector(`.sidebar-prog-${ph.id}`);
+        if (sidebarProg) sidebarProg.textContent = pp + '%';
+
+        ph.weeks_data.forEach(w => {
+          const wEl = document.querySelector(`.week-prog-${w.id}`);
+          if (!wEl) return;
+          let wt = 0, wd = 0;
+          w.days.forEach(d => {
+            d.groups.forEach(g => {
+              g.tasks.forEach(t => {
+                wt++;
+                const tid = btoa(encodeURIComponent(t)).substring(0, 16);
+                if (checked[tid]) wd++;
+              });
+            });
+          });
+          wEl.textContent = `${wd}/${wt}`;
+          wEl.className = `week-progress-mini week-prog-${w.id}` + (wd === wt && wt > 0 ? ' done' : '');
+        });
+      });
+    }
+
+    function taskId(text) {
+      return btoa(encodeURIComponent(text)).substring(0, 16);
+    }
+
+    function toggleTask(tid, cb, item) {
+      if (checked[tid]) {
+        delete checked[tid];
+        cb.classList.remove('checked');
+        item.classList.remove('done');
+      } else {
+        checked[tid] = true;
+        cb.classList.add('checked');
+        item.classList.add('done');
+      }
+      saveChecked();
+    }
+
+    function renderSidebar() {
+      const sb = document.getElementById('sidebar');
+      sb.innerHTML = '';
+      DATA.phases.forEach(ph => {
+        const sec = document.createElement('div');
+        sec.className = 'sidebar-section';
+        const btn = document.createElement('button');
+        btn.className = 'sidebar-phase-btn';
+        btn.innerHTML = `<span class="phase-dot" style="background:${ph.color}; flex-shrink: 0;"></span><span style="flex-grow: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ph.label}: ${ph.title}</span><span class="sidebar-prog-${ph.id}" style="font-size: 11px; font-weight: 600; color: ${ph.color}; background: ${ph.color}15; padding: 2px 6px; border-radius: 12px; flex-shrink: 0;">0%</span>`;
+        btn.onclick = () => {
+          document.getElementById(ph.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+        sec.appendChild(btn);
+        const weeksDiv = document.createElement('div');
+        weeksDiv.className = 'sidebar-weeks';
+        ph.weeks_data.forEach(w => {
+          const wbtn = document.createElement('button');
+          wbtn.className = 'sidebar-week-btn';
+          wbtn.innerHTML = `${w.num} <span class="week-progress-mini week-prog-${w.id}">0/0</span>`;
+          wbtn.onclick = () => document.getElementById(w.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          weeksDiv.appendChild(wbtn);
+        });
+        sec.appendChild(weeksDiv);
+        sb.appendChild(sec);
+      });
+    }
+
+    function renderOverview() {
+      const main = document.getElementById('main');
+      const prin = document.createElement('div');
+      prin.className = 'principle';
+      prin.innerHTML = `<span class="principle-icon">💡</span><div class="principle-text"><strong>Triết lý cốt lõi:</strong> Mỗi ngày phải thấy thứ gì đó trên browser. Không có ngày nào chỉ làm Terminal. Mỗi tuần có <strong>Small Win</strong> cụ thể.</div>`;
+      main.appendChild(prin);
+
+      const ov = document.createElement('div');
+      ov.className = 'overview';
+      ov.innerHTML = `<div class="overview-title">📊 Tổng quan 6 phases — 24 tuần</div><div class="phase-grid" id="phase-grid"></div>`;
+      main.appendChild(ov);
+
+      const grid = document.getElementById('phase-grid');
+      DATA.phases.forEach(ph => {
+        const card = document.createElement('div');
+        card.className = 'phase-card';
+        card.onclick = () => document.getElementById(ph.id)?.scrollIntoView({ behavior: 'smooth' });
+        card.innerHTML = `
+      <div class="phase-card-num" style="color:${ph.color}">${ph.label} · Tuần ${ph.weeks}</div>
+      <div class="phase-card-title">${ph.title}</div>
+      <div class="phase-card-weeks" style="color:${ph.color}80">${ph.tags.slice(0, 3).join(' · ')}</div>
+      <div class="phase-card-win">${ph.win}</div>
+      <div class="phase-card-prog">
+        <div class="phase-card-prog-fill pcard-fill-${ph.id}" style="background:${ph.color};width:0%"></div>
+      </div>`;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderPhases() {
+      const main = document.getElementById('main');
+      DATA.phases.forEach((ph, pi) => {
+        const div = document.createElement('div');
+        div.className = 'phase-divider';
+        div.innerHTML = `<div class="phase-divider-line"></div><div class="phase-divider-label" style="border-color:${ph.color}40">${ph.emoji} ${ph.label.toUpperCase()} — ${ph.title.toUpperCase()}</div><div class="phase-divider-line"></div>`;
+        main.appendChild(div);
+
+        const phDiv = document.createElement('div');
+        phDiv.id = ph.id;
+        phDiv.className = 'phase-header';
+        phDiv.style.cssText = `border-color:${ph.color}30`;
+        phDiv.innerHTML = `
+      <div class="phase-label" style="color:${ph.color}; background: ${ph.color}20; padding: 4px 12px; border-radius: 20px;">${ph.emoji} ${ph.label}</div>
+      <div class="phase-title">${ph.title}</div>
+      <div class="phase-goal">${ph.goal}</div>
+      <div class="phase-meta">
+        ${ph.tags.map(t => `<span class="phase-tag">${t}</span>`).join('')}
+      </div>`;
+        const beforeEl = document.createElement('style');
+        beforeEl.textContent = `#${ph.id}::before { background: linear-gradient(90deg, transparent, ${ph.color}, transparent); }`;
+        document.head.appendChild(beforeEl);
+        main.appendChild(phDiv);
+
+        ph.weeks_data.forEach(w => renderWeek(w, ph.color, main));
+      });
+    }
+
+    function renderWeek(w, color, container) {
+      const block = document.createElement('div');
+      block.className = 'week-block';
+      block.id = w.id;
+
+      const header = document.createElement('div');
+      header.className = 'week-header';
+      header.innerHTML = `
+    <span class="week-num" style="color:${color}">${w.num}</span>
+    <span class="week-title-text">${w.title}</span>
+    <span class="week-stats">
+      <span class="week-count" id="wc-${w.id}">0/0</span>
+    </span>
+    <span class="chevron" id="chv-${w.id}">▼</span>`;
+
+      const body = document.createElement('div');
+      body.className = 'week-body open';
+
+      const sw = document.createElement('div');
+      sw.className = 'small-win';
+      sw.innerHTML = `<span class="small-win-icon">🏆</span><span><strong>Small Win:</strong> ${w.win}</span>`;
+      body.appendChild(sw);
+
+      w.days.forEach(d => renderDay(d, body));
+
+      header.onclick = () => {
+        const isOpen = body.classList.contains('open');
+        body.classList.toggle('open', !isOpen);
+        document.getElementById(`chv-${w.id}`).textContent = isOpen ? '▶' : '▼';
+      };
+
+      block.appendChild(header);
+      block.appendChild(body);
+      container.appendChild(block);
+
+      let wt = 0, wd = 0;
+      w.days.forEach(d => d.groups.forEach(g => g.tasks.forEach(t => {
+        wt++;
+        const tid = taskId(t);
+        if (checked[tid]) wd++;
+      })));
+      const wcEl = document.getElementById(`wc-${w.id}`);
+      if (wcEl) {
+        wcEl.textContent = `${wd}/${wt}`;
+        if (wd === wt && wt > 0) wcEl.classList.add('done');
+      }
+    }
+
+    function renderDay(d, container) {
+      const db = document.createElement('div');
+      db.className = 'day-block';
+
+      const dh = document.createElement('div');
+      dh.className = 'day-header';
+      dh.innerHTML = `<span class="day-label ${d.labelClass}">${d.label.toUpperCase()}</span><span class="day-title">${d.title}</span>`;
+      db.appendChild(dh);
+
+      if (d.goal) {
+        const dg = document.createElement('div');
+        dg.className = 'day-goal';
+        dg.innerHTML = d.goal.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<span class="task-code">$1</span>');
+        db.appendChild(dg);
+      }
+
+      d.groups.forEach(g => {
+        const tg = document.createElement('div');
+        tg.className = 'task-group';
+        if (g.name) {
+          const gt = document.createElement('div');
+          gt.className = 'task-group-title';
+          gt.textContent = g.name;
+          tg.appendChild(gt);
+        }
+        g.tasks.forEach(t => {
+          const tid = taskId(t);
+          const item = document.createElement('div');
+          item.className = 'task-item' + (checked[tid] ? ' done' : '');
+          const cb = document.createElement('div');
+          cb.className = 'task-cb' + (checked[tid] ? ' checked' : '');
+          const txt = document.createElement('span');
+          txt.className = 'task-text';
+          txt.innerHTML = t.replace(/`([^`]+)`/g, '<span class="task-code">$1</span>');
+          item.appendChild(cb);
+          item.appendChild(txt);
+          item.onclick = () => toggleTask(tid, cb, item);
+          tg.appendChild(item);
+        });
+        db.appendChild(tg);
+      });
+
+      if (d.resources) {
+        const rb = document.createElement('div');
+        rb.className = 'resource-bar';
+        rb.innerHTML = `<span class="resource-label">Tài nguyên:</span>` +
+          d.resources.map(r => `<span class="resource-link">${r}</span>`).join('');
+        db.appendChild(rb);
+      }
+
+      container.appendChild(db);
+    }
+
+    renderSidebar();
+    renderOverview();
+    renderPhases();
+    updateGlobalStats();
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar-week-btn').forEach(b => b.classList.remove('active'));
+          const id = e.target.id;
+          document.querySelectorAll('.sidebar-week-btn').forEach(b => {
+            if (b.onclick?.toString().includes(id)) b.classList.add('active');
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -60% 0px' });
+
+    DATA.phases.forEach(ph => ph.weeks_data.forEach(w => {
+      const el = document.getElementById(w.id);
+      if (el) observer.observe(el);
+    }));
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+    position: fixed;
+    bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--bg2);
+    color: var(--text);
+    padding: 12px 24px; border-radius: 8px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    border: 1px solid ${type === 'success' ? 'var(--green)' : 'var(--red)'};
+    display: flex; align-items: center; gap: 10px;
+    z-index: 9999; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  `;
+      const icon = type === 'success'
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+
+      toast.innerHTML = `${icon} <span>${message}</span>`;
+      document.body.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+      });
+
+      setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(100px)';
+        setTimeout(() => toast.remove(), 400);
+      }, 3000);
+    }
+
+    function exportProgress() {
+      const data = localStorage.getItem(STORAGE_KEY) || '{}';
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `radar_progress_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Đã xuất JSON tiến độ thành công!', 'success');
+    }
+
+    function importProgress(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          // Validate sơ bộ xem có phải file JSON tiến độ không
+          if (typeof importedData === 'object') {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(importedData));
+            showToast('Nhập tiến độ thành công! Đang tải lại trang...', 'success');
+            setTimeout(() => location.reload(), 1500);
+          } else {
+            throw new Error('Invalid format');
+          }
+        } catch (err) {
+          showToast('File JSON không hợp lệ!', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = ''; // Reset input
+    }
+  </script>
+</body>
+
+</html>
