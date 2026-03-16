@@ -2651,7 +2651,7 @@
             d.groups.forEach(g => {
               g.tasks.forEach(t => {
                 wt++;
-                const tid = btoa(encodeURIComponent(t)).substring(0, 16);
+                const tid = taskId(t, w.id);
                 if (checked[tid]) wd++;
               });
             });
@@ -2662,8 +2662,9 @@
       });
     }
 
-    function taskId(text) {
-      return btoa(encodeURIComponent(text)).substring(0, 16);
+    function taskId(text, weekId) {
+      const key = (weekId ? `${weekId}::` : '') + text;
+      return btoa(encodeURIComponent(key)).substring(0, 16);
     }
 
     function toggleTask(tid, cb, item) {
@@ -2786,7 +2787,7 @@
       sw.innerHTML = `<span class="small-win-icon">🏆</span><span><strong>Small Win:</strong> ${w.win}</span>`;
       body.appendChild(sw);
 
-      w.days.forEach(d => renderDay(d, body));
+      w.days.forEach(d => renderDay(d, body, w.id));
 
       header.onclick = () => {
         const isOpen = body.classList.contains('open');
@@ -2801,7 +2802,7 @@
       let wt = 0, wd = 0;
       w.days.forEach(d => d.groups.forEach(g => g.tasks.forEach(t => {
         wt++;
-        const tid = taskId(t);
+        const tid = taskId(t, w.id);
         if (checked[tid]) wd++;
       })));
       const wcEl = document.getElementById(`wc-${w.id}`);
@@ -2811,7 +2812,7 @@
       }
     }
 
-    function renderDay(d, container) {
+    function renderDay(d, container, weekId) {
       const db = document.createElement('div');
       db.className = 'day-block';
 
@@ -2837,7 +2838,7 @@
           tg.appendChild(gt);
         }
         g.tasks.forEach(t => {
-          const tid = taskId(t);
+          const tid = taskId(t, weekId);
           const item = document.createElement('div');
           item.className = 'task-item' + (checked[tid] ? ' done' : '');
           const cb = document.createElement('div');
